@@ -1,4 +1,4 @@
-# Time Management System
+# Subscription Management System
 
 This project is a backend implementation of a **Subscription Management System**, developed as part of an onboarding task. It includes APIs for authentication, user management, and sunscription management, built using **Spring Boot 3.4.5**, **Java 21**, and **h2 database**.
 
@@ -81,6 +81,9 @@ This project is a backend implementation of a **Subscription Management System**
 
 ---
 
+## API Documentation
+
+- Swagger is used for API documentation.
 
 ## Spring Boot Application Setup Instructions
 
