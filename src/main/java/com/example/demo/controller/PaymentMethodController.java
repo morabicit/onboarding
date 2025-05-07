@@ -25,9 +25,9 @@ public class PaymentMethodController {
     }
 
     @PostMapping("/addPM")
-    public ResponseEntity<PaymentMethod> addPaymentMethod(
+    public ResponseEntity<PaymentMethodDto> addPaymentMethod(
             @Valid @RequestBody PaymentMethodDto pmDto) {
-        PaymentMethod paymentMethod = paymentMethodService.addPaymentMethod(pmDto);
+        PaymentMethodDto paymentMethod = paymentMethodService.addPaymentMethod(pmDto);
         return ResponseEntity.status(HttpStatus.CREATED).body(paymentMethod);
     }
 }

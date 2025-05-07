@@ -1,6 +1,6 @@
 # Subscription Management System
 
-This project is a backend implementation of a **Subscription Management System**, developed as part of an onboarding task. It includes APIs for authentication, user management, and sunscription management, built using **Spring Boot 3.4.5**, **Java 21**, and **h2 database**.
+This project is a backend implementation of a **Subscription Management System**, developed as part of an onboarding task. It includes APIs for authentication, user management, and subscription management, built using **Spring Boot 3.4.5**, **Java 21**, and **h2 database**.
 
 ---
 
@@ -67,6 +67,7 @@ This project is a backend implementation of a **Subscription Management System**
 - **Database**: h2 is used to store all entities and data.
 - **ORM Framework**: Hibernate is used for interacting with the database.
 - Entities are mapped to database tables using **Java Persistence API (JPA)** annotations.
+- **A script file** used to populate SKU data on app startup in the path 'src/main/resources/data.sql'
 
 ---
 
@@ -84,6 +85,13 @@ This project is a backend implementation of a **Subscription Management System**
 ## API Documentation
 
 - Swagger is used for API documentation.
+- a compitable version of openapi 2.8.6 is used along with spring 3.4.5 to add swager as
+documentation tool.
+- Access Swagger UI at: http://localhost:8080/swagger-ui.html.
+
+## ExceptionHandling
+- custom exceptions used along with the GlobalExceptionHandler to handle business
+errors.
 
 ## Spring Boot Application Setup Instructions
 

@@ -1,11 +1,13 @@
 package com.example.demo.service;
 
 import com.example.demo.authentication.JwtUtil;
+import com.example.demo.dto.UserDto;
 import com.example.demo.entity.User;
 import com.example.demo.enums.Role;
 import com.example.demo.exception.AuthenticationException;
 import com.example.demo.exception.EmailAlreadyExists;
 import com.example.demo.repository.UserRepository;
+import com.example.demo.utils.UserMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -19,28 +21,30 @@ import java.util.Optional;
 public class AuthService {
 
     private final UserRepository userRepository;
+    private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
     private final Logger logger = LoggerFactory.getLogger(AuthService.class);
 
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+    public AuthService(UserRepository userRepository, UserMapper userMapper, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
+        this.userMapper = userMapper;
     }
 
-    public String signup(User user) {
+    public String signup(UserDto userDto) {
         logger.info("signup() method called");
-        logger.debug("Received user details: {}", user);
+        logger.debug("Received user details: {}", userDto);
         try {
-            if (userRepository.findByEmail(user.getEmail()).isPresent()) {
+            if (userRepository.findByEmail(userDto.getEmail()).isPresent()) {
                 throw new EmailAlreadyExists("Email already exists");
             }
-
-            user.setPassword(passwordEncoder.encode(user.getPassword()));
-            user.setRole(user.getRole() == null ? Role.USER : user.getRole());
-            userRepository.save(user);
+            User userEntity = userMapper.toEntity(userDto);
+            userEntity.setPassword(passwordEncoder.encode(userDto.getPassword()));
+            userEntity.setRole(userDto.getRole() == null ? Role.USER : userEntity.getRole());
+            userRepository.save(userEntity);
             return "User registered successfully!";
         } catch (EmailAlreadyExists e) {
             logger.error("EmailAlreadyExists exception: {}", e.getMessage(), e);

@@ -1,6 +1,8 @@
 package com.example.demo.dto;
 
 import com.example.demo.entity.User;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 
 import java.time.LocalDate;
@@ -15,6 +17,8 @@ public class UserDto {
     LocalDate dateOfBirth;
     String mobileNumber;
     String role;
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    String password;
 
     public static List<UserDto> userToUserDto(List<User> users) {
         return users.stream().map(UserDto::userToUserDto).collect(Collectors.toList());

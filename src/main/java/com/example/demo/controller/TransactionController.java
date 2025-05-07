@@ -24,7 +24,7 @@ public class TransactionController {
         List<TransactionDto> transactions = transactionService.getAllTransactionsPerUser();
         return ResponseEntity.ok(transactions);
     }
-    @PostMapping("/admin")
+    @GetMapping("/admin")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public ResponseEntity<List<TransactionDto>> getAllTransactions() {
         List<TransactionDto> transactions = transactionService.getAllTransactions();

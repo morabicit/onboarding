@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.entity.*;
 import com.example.demo.enums.SubscriptionStatus;
+import com.example.demo.exception.InvalidPaymentMethod;
 import com.example.demo.exception.SubscriptionException;
 import com.example.demo.repository.*;
 import org.springframework.http.ResponseEntity;
@@ -10,6 +11,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class SubscriptionService {
@@ -30,14 +32,20 @@ public class SubscriptionService {
 
     public Subscription getSubPerUser() {
         User user = userService.getCurrentUser();
-        return subscriptionRepository.findByUser(user);
+        Optional<Subscription> subscription = subscriptionRepository.findByUserAndSubscriptionStatus(user, SubscriptionStatus.Active);
+        if (subscription.isEmpty()) {
+            throw new SubscriptionException("User not subscribed or cancelled");
+        }
+        return subscription.get();
     }
 
     public String subscribe(Long skuId, Long paymentMethodId) {
+        User user = userService.getCurrentUser();
+        SKU sku = skuRepository.findById(skuId)
+                .orElseThrow(() -> new SubscriptionException("Invalid Product"));
+        PaymentMethod paymentMethod = paymentMethodRepository.findById(paymentMethodId)
+                .orElseThrow(() -> new InvalidPaymentMethod("Invalid Payment Method"));
         try {
-            User user = userService.getCurrentUser();
-            SKU sku = skuRepository.findById(skuId).get();
-            PaymentMethod paymentMethod = paymentMethodRepository.findById(paymentMethodId).get();
             Subscription subscription = new Subscription();
             subscription.setUser(user);
             subscription.setSku(sku);
@@ -46,19 +54,18 @@ public class SubscriptionService {
             subscription.setSubscriptionStatus(SubscriptionStatus.Active);
             subscription.setPaymentMethod(paymentMethod);
             subscriptionRepository.save(subscription);
-
-            // Calculate subscription amount
-            double amount = sku.getPrice(); // Assuming SKU has a price field
-
-            // Create and save Transaction
-            Transaction transaction = new Transaction();
-            transaction.setUser(user);
-            transaction.setSubscription(subscription);
-            transaction.setAmount(amount);
-            transaction.setTransactionDate(LocalDateTime.now());
-            transaction.setDescription("Subscription for SKU: " + sku.getName());
-            transaction.setPaymentMethod(paymentMethod);
-            transactionRepository.save(transaction);
+            try {
+                Transaction transaction = new Transaction();
+                transaction.setUser(user);
+                transaction.setSubscription(subscription);
+                transaction.setAmount(sku.getPrice());
+                transaction.setTransactionDate(LocalDateTime.now());
+                transaction.setDescription("Subscription for SKU: " + sku.getName());
+                transaction.setPaymentMethod(paymentMethod);
+                transactionRepository.save(transaction);
+            } catch (Exception logEx) {
+                System.err.println("Failed to save transaction log: " + logEx.getMessage());
+            }
             return "Subscribed successfully";
         } catch (Exception e) {
             throw new SubscriptionException("User unable to subscribe");
@@ -68,7 +75,8 @@ public class SubscriptionService {
     public String update(Long skuId) {
         try {
             User user = userService.getCurrentUser();
-            SKU sku = skuRepository.findById(skuId).get();
+            SKU sku = skuRepository.findById(skuId)
+                    .orElseThrow(() -> new SubscriptionException("Invalid Product"));
             Subscription subscription = subscriptionRepository.findByUser(user);
             subscription.setSku(sku);
             subscriptionRepository.save(subscription);

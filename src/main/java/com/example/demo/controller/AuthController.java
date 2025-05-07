@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.LoginRequest;
+import com.example.demo.dto.UserDto;
 import com.example.demo.entity.User;
 import com.example.demo.service.AuthService;
 import jakarta.validation.Valid;
@@ -19,7 +20,7 @@ public class AuthController {
     }
 
     @PostMapping("/signup")
-    public ResponseEntity<String> signup(@Valid @RequestBody User user) {
+    public ResponseEntity<String> signup(@Valid @RequestBody UserDto user) {
         return ResponseEntity.status(HttpStatus.CREATED).body(authService.signup(user));
     }
 

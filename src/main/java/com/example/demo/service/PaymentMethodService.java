@@ -28,7 +28,7 @@ public class PaymentMethodService {
         this.paymentMethodMapper = paymentMethodMapper;
     }
 
-    public PaymentMethod addPaymentMethod(PaymentMethodDto pmDto) {
+    public PaymentMethodDto addPaymentMethod(PaymentMethodDto pmDto) {
         // Validate card number (e.g., Luhn algorithm)
         if(!validateCardNumber(pmDto.getCardNumber())){
             throw new InvalidPaymentMethod("invalid card number");
@@ -39,9 +39,6 @@ public class PaymentMethodService {
         // Mask the card number
         String maskedCardNumber = maskCardNumber(pmDto.getCardNumber());
 
-        // Optional: Encrypt full card number (if needed for future use)
-        //String encryptedCardNumber = encryptCardNumber(request.getCardNumber());
-
         User user = userService.getCurrentUser();
         PaymentMethod paymentMethod = new PaymentMethod();
         paymentMethod.setUser(user);
@@ -51,7 +48,7 @@ public class PaymentMethodService {
         paymentMethod.setIssuerCountry(pmDto.getIssuerCountry());
         paymentMethodRepository.save(paymentMethod);
 
-        return paymentMethod;
+        return paymentMethodMapper.toDto(paymentMethod);
     }
 
     public List<PaymentMethodDto> getUserPaymentMethods() {

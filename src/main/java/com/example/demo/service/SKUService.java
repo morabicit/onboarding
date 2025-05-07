@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.entity.SKU;
 import com.example.demo.entity.Subscription;
 import com.example.demo.repository.SKURepository;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -14,6 +15,7 @@ public class SKUService {
     public SKUService(SKURepository skuRepository) {
         this.skuRepository = skuRepository;
     }
+    @Cacheable(value = "products")
     public List<SKU> getAllProducts() {
         return skuRepository.findAll();
     }

@@ -29,8 +29,6 @@ public class UserService {
     }
 
     public List<UserDto> getAllUsers() {
-        logger.info("getAllUsers() called");
-
         List<User> users = userRepository.findAll();
         if(users.isEmpty()) {
             logger.warn("No users found in database");
@@ -38,10 +36,7 @@ public class UserService {
         return UserDto.userToUserDto(users);
     }
     public Optional<UserDto> getUserById(Long id) {
-        logger.info("getUserById() called for id: {}", id);
-        logger.debug("getUserById() called with parameters [id: {}]", id);
         Optional<User> user = userRepository.findById(id);
-
         if(user.isEmpty()) {
             logger.error("User not found with id: {}", id);
             throw new UserNotFound("User not Found");
@@ -50,9 +45,6 @@ public class UserService {
     }
 
     public UserDto partialUpdateUser(Long id, Map<String, Object> updates) {
-        logger.info("partialUpdateUser() called");
-        logger.debug("partialUpdateUser() called with parameters [id: {}, updates: {}]", id, updates.keySet());
-
         User user = userRepository.findById(id)
                 .orElseThrow(() -> {
                     logger.error("User not found for update with id: {}", id);
@@ -81,9 +73,6 @@ public class UserService {
     }
 
     public void deleteUser(Long id) {
-        logger.info("deleteUser() called");
-        logger.debug("deleteUser() called with parameters [id: {}]", id);
-
         if (!userRepository.existsById(id)) {
             logger.error("Delete failed - user not found with id: {}", id);
             throw new UserNotFound("User not found with id: " + id);
