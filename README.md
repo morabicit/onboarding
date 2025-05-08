@@ -13,7 +13,9 @@ This project is a backend implementation of a **Subscription Management System**
 5. [API Documentation](#api-documentation)
 6. [Project Structure](#project-structure)
 7. [Exception Handling](#exception-handling)
-8. [Setup Instructions](#setup-instructions)
+8. [Caching](Caching)
+9. [Logging](Logging)
+10. [Setup Instructions](#setup-instructions)
 
 ---
 
@@ -85,13 +87,38 @@ This project is a backend implementation of a **Subscription Management System**
 ## API Documentation
 
 - Swagger is used for API documentation.
-- a compitable version of openapi 2.8.6 is used along with spring 3.4.5 to add swager as
+- a compatible version of openapi 2.8.6 is used along with spring 3.4.5 to add swagger as
 documentation tool.
 - Access Swagger UI at: http://localhost:8080/swagger-ui.html.
 
 ## ExceptionHandling
 - custom exceptions used along with the GlobalExceptionHandler to handle business
 errors.
+
+## Caching
+- Redis is used as a solution for caching.
+- An embedded Redis instance is used on the default port (6379) for local development.
+- Redis acts as a caching layer to reduce database hits and improve performance for frequently accessed data.
+
+We use RedisTemplate to:
+
+- Store data in Redis (e.g., product lists).
+- Fetch data from Redis before querying the database.
+- This setup helps minimize load on the database and speeds up response times for read-heavy operations.
+- Data can be optionally expired using TTL (not enforced by default).
+
+## Logging with Log4J
+
+- Log4J is used as the default logging framework.
+- Used in some cases like authentication and registration.
+- Logging guidelines:
+    - **INFO level**: Logs function entry points.
+    - **DEBUG level**: Logs function parameters and detailed execution steps.
+    - **ERROR level**: Logs exceptions in catch blocks.
+    - **WARN level**: Logs unexpected results that do not cause system errors.
+    - **DEBUG level**: Used as needed for deep debugging.
+
+---
 
 ## Spring Boot Application Setup Instructions
 

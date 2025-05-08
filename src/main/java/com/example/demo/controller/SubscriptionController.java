@@ -21,8 +21,8 @@ public class SubscriptionController {
     }
 
     @GetMapping
-    public ResponseEntity<Subscription> getSubPerUser() {
-        Subscription products = subscriptionService.getSubPerUser();
+    public ResponseEntity<List<Subscription>> getSubPerUser() {
+        List<Subscription> products = subscriptionService.getSubPerUser();
         return ResponseEntity.ok(products);
     }
     @PostMapping("/subscribe")

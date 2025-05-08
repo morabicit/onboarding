@@ -30,17 +30,29 @@ public class SubscriptionService {
         this.paymentMethodRepository = paymentMethodRepository;
     }
 
-    public Subscription getSubPerUser() {
+    public List<Subscription> getSubPerUser() {
         User user = userService.getCurrentUser();
-        Optional<Subscription> subscription = subscriptionRepository.findByUserAndSubscriptionStatus(user, SubscriptionStatus.Active);
-        if (subscription.isEmpty()) {
+        Optional<List<Subscription>> subscriptions = subscriptionRepository.findAllByUser(user);
+        if (subscriptions.isEmpty()) {
             throw new SubscriptionException("User not subscribed or cancelled");
         }
-        return subscription.get();
+        return subscriptions.get();
+    }
+    public Optional<Subscription> getActiveSubPerUser() {
+        User user = userService.getCurrentUser();
+        Optional<Subscription> subscription = subscriptionRepository.findByUserAndSubscriptionStatus(user, SubscriptionStatus.Active);
+        /*if (subscription.isEmpty()) {
+            throw new SubscriptionException("User not subscribed or cancelled");
+        }*/
+        return subscription;
     }
 
     public String subscribe(Long skuId, Long paymentMethodId) {
         User user = userService.getCurrentUser();
+        Optional<Subscription> existingSubscription = getActiveSubPerUser();
+        if (!existingSubscription.isEmpty()) {
+            throw new SubscriptionException("User Already Subscribed");
+        }
         SKU sku = skuRepository.findById(skuId)
                 .orElseThrow(() -> new SubscriptionException("Invalid Product"));
         PaymentMethod paymentMethod = paymentMethodRepository.findById(paymentMethodId)
