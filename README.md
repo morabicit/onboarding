@@ -117,7 +117,6 @@ We use RedisTemplate to:
     - **ERROR level**: Logs exceptions in catch blocks.
     - **WARN level**: Logs unexpected results that do not cause system errors.
     - **DEBUG level**: Used as needed for deep debugging.
-
 ---
 
 ## Spring Boot Application Setup Instructions
